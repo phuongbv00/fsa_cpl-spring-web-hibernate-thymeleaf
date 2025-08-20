@@ -3,6 +3,7 @@ package fsa.cplorm.model;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "student")
@@ -20,6 +21,12 @@ public class Student {
     private String email;
 
     private String phone;
+
+    @OneToMany(mappedBy = "student")
+    private List<Enrollment> enrollments;
+
+    @Column(nullable = false)
+    private Integer enrollmentCount = 0;
 
     public Integer getId() {
         return id;
@@ -59,5 +66,21 @@ public class Student {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(List<Enrollment> enrollments) {
+        this.enrollments = enrollments;
+    }
+
+    public Integer getEnrollmentCount() {
+        return enrollmentCount;
+    }
+
+    public void setEnrollmentCount(Integer enrollmentCount) {
+        this.enrollmentCount = enrollmentCount;
     }
 }

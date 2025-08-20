@@ -16,7 +16,7 @@
         <th scope="col">YOB</th>
         <th scope="col">Email</th>
         <th scope="col">Phone</th>
-        <th scope="col" colspan="2">Actions</th>
+        <th scope="col" colspan="3">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -26,6 +26,7 @@
         <td th:text="${student.yob}"></td>
         <td th:text="${student.email}"></td>
         <td th:text="${student.phone}"></td>
+        <td><a th:href="@{/student/{id}(id=${student.id})}">Details</a></td>
         <td><a th:href="@{/student/update/{id}(id=${student.id})}">Update</a></td>
         <td><a th:href="@{/student/delete/{id}(id=${student.id})}">Delete</a></td>
     </tr>

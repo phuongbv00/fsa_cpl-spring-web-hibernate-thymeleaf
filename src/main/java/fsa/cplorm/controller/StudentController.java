@@ -1,9 +1,14 @@
 package fsa.cplorm.controller;
 
 import fsa.cplorm.dto.StudentDto;
+import fsa.cplorm.model.Course;
+import fsa.cplorm.model.Enrollment;
 import fsa.cplorm.model.Student;
+import fsa.cplorm.repository.CourseRepository;
+import fsa.cplorm.repository.EnrollmentRepository;
 import fsa.cplorm.repository.StudentRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +20,13 @@ import java.util.List;
 @RequestMapping("/student")
 public class StudentController {
     private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
-    public StudentController(StudentRepository studentRepository) {
+    public StudentController(StudentRepository studentRepository, CourseRepository courseRepository, EnrollmentRepository enrollmentRepository) {
         this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     @GetMapping("")
@@ -57,6 +66,30 @@ public class StudentController {
     public String delete(@PathVariable Integer id) {
         studentRepository.deleteById(id);
         return "redirect:/student";
+    }
+
+    @GetMapping("{id}")
+    public String detail(@PathVariable Integer id, Model model) {
+        Student student = studentRepository.findById(id);
+        model.addAttribute("student", toDto(student));
+        List<Enrollment> enrollments = student.getEnrollments();
+        model.addAttribute("enrollments", enrollments);
+        List<Course> courses = courseRepository.findAll();
+        model.addAttribute("courses", courses);
+        return "student/detail";
+    }
+
+    @GetMapping("{id}/enroll/{courseId}")
+    @Transactional
+    public String enroll(@PathVariable Integer id, @PathVariable Long courseId) {
+        Student student = studentRepository.findById(id);
+        Course course = courseRepository.findById(courseId).orElseThrow();
+        Enrollment enrollment = new Enrollment();
+        enrollment.setStudent(student);
+        enrollment.setCourse(course);
+        student.setEnrollmentCount(student.getEnrollmentCount() + 1);
+        enrollmentRepository.save(enrollment);
+        return "redirect:/student/" + id;
     }
 
     private Student toEntity(StudentDto studentDto) {
