@@ -2,13 +2,13 @@ package fsa.cplorm.security;
 
 import fsa.cplorm.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class JpaUserDetailsService implements UserDetailsService {
@@ -24,7 +24,10 @@ public class JpaUserDetailsService implements UserDetailsService {
                 .map(u -> new UserDetails() {
                     @Override
                     public Collection<? extends GrantedAuthority> getAuthorities() {
-                        return List.of();
+                        return u.getRoles()
+                                .stream()
+                                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
+                                .toList();
                     }
 
                     @Override
