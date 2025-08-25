@@ -8,6 +8,9 @@
 </head>
 <body>
 <a class="btn btn-primary" th:href="@{/student/create}">Create</a>
+<form method="post" th:action="@{/logout}">
+    <button class="btn btn-danger" type="submit">Logout</button>
+</form>
 <table class="table">
     <thead>
     <tr>
